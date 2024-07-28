@@ -227,7 +227,7 @@ def data_preprocessing(df):
     return df
 
 def heart_disease_prediction():
-    st.write("### Heart Disease Prediction")
+    
     # Option to download sample dataset
     st.write("#### Download Sample Dataset")
     sample_data_url = "https://raw.githubusercontent.com/AdhyayanJain/SCMA--Assignment-A7/main/heart.csv"
@@ -317,7 +317,7 @@ def heart_disease_prediction():
 
 
 def breast_cancer_prediction():
-    st.write("### Breast Cancer Prediction")
+    
 
     # Option to download sample dataset
     st.write("#### Download Sample Dataset")
@@ -443,7 +443,7 @@ def breast_cancer_prediction():
                 st.write(f"### Prediction Probability: {prediction_proba}")
 
 def insurance_price_prediction():
-    st.write("### Insurance Price Prediction")
+    
     # Option to download sample dataset
     st.write("#### Download Sample Dataset")
     sample_data_url = "https://raw.githubusercontent.com/AdhyayanJain/SCMA--Assignment-A7/main/insurance.csv"
