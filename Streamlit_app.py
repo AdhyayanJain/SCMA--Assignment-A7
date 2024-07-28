@@ -221,7 +221,17 @@ def data_preprocessing(df):
 
 def heart_disease_prediction():
     st.write("### Heart Disease Prediction")
-
+    # Option to download sample dataset
+    st.write("#### Download Sample Dataset")
+    sample_data_url = "https://raw.githubusercontent.com/AdhyayanJain/SCMA--Assignment-A7/main/heart.csv"
+    if st.button("Download Sample Dataset"):
+        sample_data = download_sample_data(sample_data_url)
+        st.download_button(
+            label="Download CSV",
+            data=sample_data,
+            file_name="sample_insurance_data.csv",
+            mime="text/csv"
+        )
     uploaded_file = st.file_uploader("Upload Heart Disease Dataset (CSV)", type="csv", key="heart_disease_file")
     if uploaded_file:
         df = pd.read_csv(uploaded_file)
@@ -302,7 +312,17 @@ def heart_disease_prediction():
 def breast_cancer_prediction():
     st.write("### Breast Cancer Prediction")
 
-
+    # Option to download sample dataset
+    st.write("#### Download Sample Dataset")
+    sample_data_url = "https://raw.githubusercontent.com/AdhyayanJain/SCMA--Assignment-A7/main/cancer.csv"
+    if st.button("Download Sample Dataset"):
+        sample_data = download_sample_data(sample_data_url)
+        st.download_button(
+            label="Download CSV",
+            data=sample_data,
+            file_name="sample_insurance_data.csv",
+            mime="text/csv"
+        )
     uploaded_file = st.file_uploader("Upload Breast Cancer Dataset (CSV)", type="csv", key="breast_cancer_file")
     if uploaded_file:
         df = pd.read_csv(uploaded_file)
@@ -417,7 +437,17 @@ def breast_cancer_prediction():
 
 def insurance_price_prediction():
     st.write("### Insurance Price Prediction")
-
+    # Option to download sample dataset
+    st.write("#### Download Sample Dataset")
+    sample_data_url = "https://raw.githubusercontent.com/AdhyayanJain/SCMA--Assignment-A7/main/insurance.csv"
+    if st.button("Download Sample Dataset"):
+        sample_data = download_sample_data(sample_data_url)
+        st.download_button(
+            label="Download CSV",
+            data=sample_data,
+            file_name="sample_insurance_data.csv",
+            mime="text/csv"
+        )
     uploaded_file = st.file_uploader("Upload Insurance Price Dataset (CSV)", type="csv", key="insurance_price_file")
     if uploaded_file:
         df = pd.read_csv(uploaded_file)
@@ -483,7 +513,6 @@ def main():
     st.title("Interactive Data Analysis and Machine Learning App")
 
     st.sidebar.title("Navigation")
-    st.sidebar.image("https://static.streamlit.io/examples/dog.jpg", use_column_width=True)
     menu = [
         "Upload Data", "EDA", "Feature Engineering", "Sentiment Analysis", 
         "Customer Segmentation", "Real-time Stock Analysis", "Heart Disease Prediction", 
