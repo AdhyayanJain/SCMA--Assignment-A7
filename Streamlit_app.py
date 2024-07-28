@@ -19,6 +19,14 @@ import seaborn as sns
 import altair as alt
 from io import BytesIO
 import requests
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.preprocessing import LabelEncoder, StandardScaler, MinMaxScaler, RobustScaler
+from sklearn.impute import SimpleImputer
+from sklearn.metrics import accuracy_score, classification_report, mean_squared_error, r2_score
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.linear_model import LogisticRegression, LinearRegression
+from sklearn.svm import SVC, SVR
+from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 
 
 
@@ -515,15 +523,114 @@ def insurance_price_prediction():
                 prediction = st.session_state.model.predict(user_input_df)
                 st.write(f"### Predicted Insurance Price: {prediction[0]}")
 
-# Main App
+# General ML Model Function
+def general_ml_model(df):
+    st.header("General ML Model Training")
+    
+    if df is not None:
+        # Choose target variable and feature variables
+        target = st.selectbox("Select target variable", df.columns)
+        features = [col for col in df.columns if col != target]
+        X = df[features]
+        y = df[target]
+
+        # Preprocessing
+        st.sidebar.header("Preprocessing Options")
+        impute_strategy = st.sidebar.selectbox("Imputation Strategy", ["mean", "median", "most_frequent", "constant"])
+        scaler = st.sidebar.selectbox("Scaling Method", ["None", "Standard Scaler", "MinMax Scaler", "Robust Scaler"])
+
+        # Impute missing values
+        imputer = SimpleImputer(strategy=impute_strategy)
+        X = pd.DataFrame(imputer.fit_transform(X), columns=features)
+
+        # Encode categorical features
+        for col in X.select_dtypes(include=['object']).columns:
+            le = LabelEncoder()
+            X[col] = le.fit_transform(X[col])
+
+        # Scale features
+        if scaler == "Standard Scaler":
+            X = StandardScaler().fit_transform(X)
+        elif scaler == "MinMax Scaler":
+            X = MinMaxScaler().fit_transform(X)
+        elif scaler == "Robust Scaler":
+            X = RobustScaler().fit_transform(X)
+
+        # Split the data
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+        # Model selection
+        model_type = st.selectbox("Select a model type", ["Classification", "Regression"])
+
+        if model_type == "Classification":
+            model = st.selectbox("Select a classification model", [
+                "Random Forest", "Logistic Regression", "SVM", "KNN"
+            ])
+            if model == "Random Forest":
+                clf = RandomForestClassifier()
+                params = {'n_estimators': [50, 100], 'max_depth': [None, 10, 20]}
+            elif model == "Logistic Regression":
+                clf = LogisticRegression()
+                params = {'C': [0.1, 1, 10]}
+            elif model == "SVM":
+                clf = SVC()
+                params = {'C': [0.1, 1, 10], 'kernel': ['linear', 'rbf']}
+            elif model == "KNN":
+                clf = KNeighborsClassifier()
+                params = {'n_neighbors': [3, 5, 7]}
+
+            # Hyperparameter tuning
+            grid_search = GridSearchCV(clf, params, cv=5)
+            grid_search.fit(X_train, y_train)
+            best_model = grid_search.best_estimator_
+            y_pred = best_model.predict(X_test)
+            accuracy = accuracy_score(y_test, y_pred)
+            report = classification_report(y_test, y_pred)
+            st.write("Best Parameters:", grid_search.best_params_)
+            st.write("Accuracy:", accuracy)
+            st.text("Classification Report:\n" + report)
+
+        elif model_type == "Regression":
+            model = st.selectbox("Select a regression model", [
+                "Random Forest", "Linear Regression", "SVR", "KNN"
+            ])
+            if model == "Random Forest":
+                reg = RandomForestRegressor()
+                params = {'n_estimators': [50, 100], 'max_depth': [None, 10, 20]}
+            elif model == "Linear Regression":
+                reg = LinearRegression()
+                params = {}
+            elif model == "SVR":
+                reg = SVR()
+                params = {'C': [0.1, 1, 10], 'kernel': ['linear', 'rbf']}
+            elif model == "KNN":
+                reg = KNeighborsRegressor()
+                params = {'n_neighbors': [3, 5, 7]}
+
+            # Hyperparameter tuning
+            if params:
+                grid_search = GridSearchCV(reg, params, cv=5)
+                grid_search.fit(X_train, y_train)
+                best_model = grid_search.best_estimator_
+            else:
+                best_model = reg.fit(X_train, y_train)
+
+            y_pred = best_model.predict(X_test)
+            mse = mean_squared_error(y_test, y_pred)
+            r2 = r2_score(y_test, y_pred)
+            st.write("Best Parameters:", grid_search.best_params_ if params else "N/A")
+            st.write("Mean Squared Error:", mse)
+            st.write("R^2 Score:", r2)
+
+# Main App Function
 def main():
     st.title("Interactive Data Analysis and Machine Learning App")
 
     st.sidebar.title("Navigation")
-    menu = [
-         "Heart Disease Prediction", 
-        "Breast Cancer Prediction", "Insurance Price Prediction","Upload Data For EDA", "EDA", "Feature Engineering", "Sentiment Analysis", 
-        "Customer Segmentation", "Real-time Stock Analysis",
+    menu = ["Heart Disease Prediction", 
+        "Breast Cancer Prediction", "Insurance Price Prediction", "General ML Model",
+        "Upload Data", "EDA", "Feature Engineering", "Sentiment Analysis", 
+        "Customer Segmentation", "Real-time Stock Analysis" 
     ]
     choice = st.sidebar.selectbox("Select an Option", menu)
 
@@ -571,6 +678,12 @@ def main():
     elif choice == "Insurance Price Prediction":
         st.header("Insurance Price Prediction")
         insurance_price_prediction()
+    
+    elif choice == "General ML Model":
+        st.header("General ML Model Training")
+        df = upload_and_preview()
+        if df is not None:
+            general_ml_model(df)
 
 def eda_options(df):
     st.sidebar.subheader("EDA Options")
