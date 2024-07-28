@@ -528,7 +528,7 @@ def main():
     choice = st.sidebar.selectbox("Select an Option", menu)
 
     st.sidebar.markdown("---")
-    st.sidebar.write("Developed by [Your Name](https://github.com/YourGitHub)")
+    st.sidebar.write("Developed by [Adhyayan Amit Jain](https://github.com/AdhyayanJain)")
 
     if choice == "Upload Data":
         st.header("Upload Data")
