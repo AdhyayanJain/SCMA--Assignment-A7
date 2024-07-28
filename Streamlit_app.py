@@ -521,9 +521,9 @@ def main():
 
     st.sidebar.title("Navigation")
     menu = [
-        "Upload Data", "EDA", "Feature Engineering", "Sentiment Analysis", 
-        "Customer Segmentation", "Real-time Stock Analysis", "Heart Disease Prediction", 
-        "Breast Cancer Prediction", "Insurance Price Prediction"
+         "Heart Disease Prediction", 
+        "Breast Cancer Prediction", "Insurance Price Prediction","Upload Data For EDA", "EDA", "Feature Engineering", "Sentiment Analysis", 
+        "Customer Segmentation", "Real-time Stock Analysis",
     ]
     choice = st.sidebar.selectbox("Select an Option", menu)
 
