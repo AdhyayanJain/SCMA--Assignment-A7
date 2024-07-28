@@ -22,7 +22,14 @@ import requests
 
 
 
-
+def download_sample_data(url):
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        return response.content
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error downloading sample data: {e}")
+        return None
 
 # Function for file upload and preview
 def upload_and_preview():
